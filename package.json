@@ -1,0 +1,29 @@
+{
+  "name": "liri-bot",
+  "version": "1.0.0",
+  "description": "A SIRI emulator that gets movies and song data, and a users latest tweets",
+  "main": "liri.js",
+  "dependencies": {
+    "request": "^2.81.0",
+    "spotify": "^0.3.0",
+    "twitter": "^1.7.0",
+    "weather-js": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johngorm/LIRI-Bot.git"
+  },
+  "keywords": [
+    "node.js"
+  ],
+  "author": "John Gorman",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/johngorm/LIRI-Bot/issues"
+  },
+  "homepage": "https://github.com/johngorm/LIRI-Bot#readme"
+}
