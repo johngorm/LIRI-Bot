@@ -1,6 +1,8 @@
 //Node file that emulates SIRI, only using written language as input - hence LIRI
+'use strict'
 console.assert(process.argv[2], 'No instruction provided in command line. ');
 const userCommand = process.argv[2];
+const option = process.argv.splice(3).join(' ');
 
 const twitter = require('twitter');
 const twitter_exports = require('./keys.js');
@@ -16,32 +18,46 @@ const spotify = require('spotify');
 
 const request = require('request');
 
-parseInstruction(userCommand);
+const fs = require('fs');
 
-function parseInstruction(instruction) {
+parseInstruction(userCommand, option);
+
+function parseInstruction(instruction, option) {
 	if(instruction === 'my-tweets'){
 		queryTwitter();		
 	}
 
 	else if(instruction === 'spotify-this-song'){
 		var song = 'The+Sign+Ace+of+Base';
-		if(process.argv[3]){
-			song = process.argv.splice(3).join('+');
+		if(option){
+			song = option.split(' ').join('+');
 		}
+		
 		querySpotify(song);
 	}
 
 	else if(instruction === 'movie-this'){
 		var movie = 'Mr.+Nobody';
-		if(process.argv[3]){
-			movie = process.argv.splice(3).join('+');
+		if(option){
+			movie = option.split(' ').join('+');
 		}
 		queryOMDB(movie);
 
 	}
 
 	else if(instruction === 'do-what-it-says'){
-		console.log('car');
+		fs.readFile('./random.txt', 'utf8', (error, data) => {
+			if(error){
+				console.error('Error occured: ', error);
+			}
+			else{
+				const instructionsText = data.split(',');
+				
+				for(let ii = 0; ii < instructionsText.length; ii += 2){
+					parseInstruction(instructionsText[ii].trim(), instructionsText[ii+1].trim());
+				}
+			}
+		});
 
 	}
 
@@ -66,7 +82,7 @@ function queryTwitter(){
 };
 
 function querySpotify(track){
-	searchOptions = {
+	var searchOptions = {
 		type: 'track',
 		query: track
 	};
@@ -76,8 +92,8 @@ function querySpotify(track){
 			console.error('Error occured: ' + error)
 		}
 		else{
-			let track = song.tracks.items[0];
-			let track_artists = track.artists;
+			const track = song.tracks.items[0];
+			const track_artists = track.artists;
 			var artists = '';
 			track_artists.forEach(function(artist){
 				artists = artists + artist.name + ', ';
@@ -96,9 +112,8 @@ function queryOMDB(movieTitle){
 		if(error || response.statusCode !== 200){
 			console.error('Error ' + response.statusCode + ': ' + error);
 		}
-		console.log(JSON.stringify(JSON.parse(body), null, 2))
+	
 		let movieInfo = JSON.parse(body);
-		//console.log(movie);
 		console.log('\nTitle: ', movieInfo.Title);
 		console.log('Year: ' , movieInfo.Year);
 		console.log('IMDB rating: ', movieInfo.imdbRating);
