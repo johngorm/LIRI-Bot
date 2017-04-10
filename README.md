@@ -19,10 +19,11 @@ Finally, go the queryTwitter function in liri.js. Change the second argument for
 #usage: node liri.js [command] [title]
 
 command - enter command to execute. Options are as follows:
+
   my-tweets: Display the latests tweets from the user name provided in the liri.js file.
 
   spotify-this-song [title]: Search spotify for a track with the provided title name. Default search is  "The Sign" by Ace of Base.
 
   movie-this [title]: Search for information on a movie by title. Default search is "Mr. Robot".
-  
+
   do-what-it-says: Reads CSV instructions found in the random.txt file. 
