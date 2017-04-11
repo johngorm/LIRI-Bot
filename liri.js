@@ -20,6 +20,8 @@ const request = require('request');
 
 const fs = require('fs');
 
+const logFile = 'log.txt';
+
 parseInstruction(userCommand, option);
 
 function parseInstruction(instruction, option) {
@@ -71,6 +73,11 @@ function queryTwitter() {
         } else {
             tweets.forEach(function(tweet) {
                 console.log('\n' + tweet.text.trim());
+                fs.appendFile(logFile, '\n' + tweet.text.trim(), (error) => {
+                    if(error){
+                        throw error;
+                    }
+                });
             });
         }
     });
@@ -97,6 +104,13 @@ function querySpotify(track) {
             console.log('Album name: ', track.album.name)
             console.log('Track Preview Link: ', track.preview_url)
             console.log('~~~~~~~~~~~~~~~~~~~~');
+            let logText = '\nArtist(s): ' + artists + '\nTrack Name: ' + track.name + '\nAlbum name: ' + track.album.name 
+                + '\nTrack Preview Link: ' + track.preview_url + '\n~~~~~~~~~~~~~';
+            fs.appendFile(logFile, logText, (error) => {
+                if(error){
+                    throw error;
+                }
+            });
         }
     });
 };
@@ -114,11 +128,23 @@ function queryOMDB(movieTitle) {
         console.log('Country: ', movieInfo.Country);
         console.log('Plot: ', movieInfo.Plot);
         console.log('Staring: ', movieInfo.Actors);
+        var logText = '\nTitle: ' + movieInfo.Title + '\nYear: ' + movieInfo.Year 
+            + '\nIMDB rating: ' + movieInfo.imdbRating + '\nCountry: ' + movieInfo.Country
+            + '\nPlot: ' + movieInfo.Plot + '\nStaring: ' + movieInfo.Actors;
         movieInfo.Ratings.forEach((rating) => {
             if (rating['Source'] === 'Rotten Tomatoes') {
                 console.log('Rotten Tomatoes Rating:', rating['Value']);
+                logText = logText + '\nRotten Tomatoes Rating: ' + rating['Value'];
             }
-        })
+        });
+
+        // console.log('Rotten Tomatoes URL: ', movieInfo.tomatoURL);
+        // logText += '\nRotten Tomatoes URL: ' + movieInfo.tomatoURL;
+        fs.appendFile(logFile, logText, (error) => {
+            if(error){
+                throw error;
+            }
+        });
 
 
     })
