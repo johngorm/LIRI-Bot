@@ -116,7 +116,7 @@ function querySpotify(track) {
 };
 
 function queryOMDB(movieTitle) {
-    request('http://www.omdbapi.com/?t=' + movieTitle + '&y=&plot=short&r=json', (error, response, body) => {
+    request('http://www.omdbapi.com/?t=' + movieTitle + '&y=&plot=short&tomatoes=true&r=json', (error, response, body) => {
         if (error || response.statusCode !== 200) {
             console.error('Error ' + response.statusCode + ': ' + error);
         }
@@ -138,8 +138,8 @@ function queryOMDB(movieTitle) {
             }
         });
 
-        // console.log('Rotten Tomatoes URL: ', movieInfo.tomatoURL);
-        // logText += '\nRotten Tomatoes URL: ' + movieInfo.tomatoURL;
+        console.log('Rotten Tomatoes URL: ', movieInfo.tomatoURL);
+        logText += '\nRotten Tomatoes URL: ' + movieInfo.tomatoURL;
         fs.appendFile(logFile, logText, (error) => {
             if(error){
                 throw error;
