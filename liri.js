@@ -46,14 +46,19 @@ function parseInstruction(instruction, option) {
             if (error) {
                 console.error('Error occured: ', error);
             } else {
+                //Progarm can run random.txt even with multiple commands
                 const instructionsText = data.split(',');
                 var ii = 0;
                 while (ii < instructionsText.length) {
-                    if (instructionsText[ii].trim() === 'my-tweets') {
-                        parseInstruction(instructionsText[ii].trim());
+                    let thisInstruction = instructionsText[ii].trim();
+                    let nextInstruction;
+                    (ii+ 1) < instructionsText.length ? nextInstruction = instructionsText[ii + 1].trim() : nextInstruction = null;
+                    if (thisInstruction === 'my-tweets' || ['my-tweets', 'spotify-this-song', 'movie-this'].includes(nextInstruction) ) {
+                        //my-tweets has no other option
+                        parseInstruction(thisInstruction);
                         ii++;
                     } else {
-                        parseInstruction(instructionsText[ii].trim(), instructionsText[ii + 1].trim());
+                        parseInstruction(thisInstruction, nextInstruction);
                         ii += 2;
                     }
                 }
