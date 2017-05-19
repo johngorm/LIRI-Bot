@@ -2,10 +2,10 @@
 'use strict'
 console.assert(process.argv[2], 'No instruction provided in command line. ');
 const userCommand = process.argv[2];
-const option = process.argv.splice(3).join(' ');
+const option = process.argv.splice(3).join(' ');   
 
 const twitter = require('twitter');
-const twitter_exports = require('./keys.js');
+const twitter_exports = require('./keys.js'); 
 const twitterKeys = twitter_exports.twitterKeys;
 const client = new twitter({
     consumer_key: twitterKeys.consumer_key,
@@ -28,14 +28,14 @@ function parseInstruction(instruction, option) {
     if (instruction === 'my-tweets') {
         queryTwitter();
     } else if (instruction === 'spotify-this-song') {
-        var song = 'The+Sign+Ace+of+Base';
+        var song = 'The+Sign+Ace+of+Base';  //Default song if none provided by user
         if (option) {
             song = option.split(' ').join('+');
         }
-
         querySpotify(song);
+
     } else if (instruction === 'movie-this') {
-        var movie = 'Mr.+Nobody';
+        var movie = 'Mr.+Nobody';   //Default movie if none provided by user
         if (option) {
             movie = option.split(' ').join('+');
         }
@@ -54,7 +54,7 @@ function parseInstruction(instruction, option) {
                     let nextInstruction;
                     (ii+ 1) < instructionsText.length ? nextInstruction = instructionsText[ii + 1].trim() : nextInstruction = null;
                     if (thisInstruction === 'my-tweets' || ['my-tweets', 'spotify-this-song', 'movie-this'].includes(nextInstruction) ) {
-                        //my-tweets has no other option
+                        //User calls for tweets or they want a song/movie info but failed to provide a title after the instruction
                         parseInstruction(thisInstruction);
                         ii++;
                     } else {
@@ -72,6 +72,7 @@ function parseInstruction(instruction, option) {
 };
 
 function queryTwitter() {
+    //Change screen name to your own to get your tweets
     client.get('statuses/user_timeline', { screen_name: 'stormy_eye' }, function(error, tweets, response) {
         if (error) {
             console.log('Error occured: ' + error);
@@ -98,6 +99,7 @@ function querySpotify(track) {
         if (error) {
             console.error('Error occured: ' + error)
         } else {
+            //Get the top song response
             const track = song.tracks.items[0];
             const track_artists = track.artists;
             var artists = '';
@@ -122,11 +124,18 @@ function querySpotify(track) {
 
 function queryOMDB(movieTitle) {
     request('http://www.omdbapi.com/?t=' + movieTitle + '&y=&plot=short&tomatoes=true&r=json', (error, response, body) => {
-        if (error || response.statusCode !== 200) {
+        if (error || response.statusCode !== 200 ) {
             console.error('Error ' + response.statusCode + ': ' + error);
+            throw error;
+        }
+        let movieInfo = JSON.parse(body);
+        //Check if any valid movie results returned
+        if(movieInfo['Response'] == 'False'){
+            console.error('No film results returned');
+            return ;
         }
 
-        let movieInfo = JSON.parse(body);
+        //Print movie info to console
         console.log('\nTitle: ', movieInfo.Title);
         console.log('Year: ', movieInfo.Year);
         console.log('IMDB rating: ', movieInfo.imdbRating);
@@ -145,6 +154,8 @@ function queryOMDB(movieTitle) {
 
         console.log('Rotten Tomatoes URL: ', movieInfo.tomatoURL);
         logText += '\nRotten Tomatoes URL: ' + movieInfo.tomatoURL;
+
+
         fs.appendFile(logFile, logText, (error) => {
             if(error){
                 throw error;
