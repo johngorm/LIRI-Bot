@@ -101,6 +101,11 @@ function querySpotify(track) {
         } else {
             //Get the top song response
             const track = song.tracks.items[0];
+            if(!track){
+                console.error('Error: No track found');
+                return -1;
+            }
+
             const track_artists = track.artists;
             var artists = '';
             track_artists.forEach(function(artist) {
